@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quarters Master — AppADay 044</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wood-dark:#241710;
+    --wood:#3c2a1c;
+    --wood-light:#5a4030;
+    --felt:#1f4d3d;
+    --felt-light:#2c6b54;
+    --brass:#c9a14a;
+    --brass-light:#f0d28a;
+    --cream:#f3e9d2;
+    --foam:#fff7e0;
+    --miss:#b5483a;
+    --shadow: rgba(0,0,0,0.45);
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+  html,body{
+    margin:0;
+    min-height:100dvh;
+    background: radial-gradient(ellipse at top, var(--wood-light) 0%, var(--wood) 45%, var(--wood-dark) 100%);
+    color: var(--cream);
+    font-family: 'Oswald', sans-serif;
+    overflow-x:hidden;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    min-height:100dvh;
+  }
+
+  header, footer{
+    text-align:center;
+    padding: 10px 16px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass-light);
+    background: rgba(0,0,0,0.25);
+    flex-shrink:0;
+  }
+
+  header a, footer a{
+    color: var(--brass-light);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(240,210,138,0.4);
+  }
+
+  header .num{
+    color: var(--cream);
+    font-weight:700;
+    margin-right: 6px;
+  }
+
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 14px 16px 24px;
+    gap: 14px;
+    max-width: 480px;
+    width:100%;
+    margin: 0 auto;
+  }
+
+  h1{
+    font-size: clamp(28px, 8vw, 40px);
+    font-weight:700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 4px 0 0;
+    text-shadow: 0 3px 0 rgba(0,0,0,0.4);
+    background: linear-gradient(180deg, var(--brass-light), var(--brass));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tagline{
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(243,233,210,0.6);
+    margin-top: -8px;
+  }
+
+  .link-btn{
+    background:none;
+    border:none;
+    color: var(--brass-light);
+    font-family:'Oswald', sans-serif;
+    font-size: 12px;
+    font-weight:600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-decoration-color: rgba(240,210,138,0.4);
+    cursor:pointer;
+    padding: 2px 0;
+    margin-top: -6px;
+  }
+
+  /* SCOREBOARD */
+  .scoreboard{
+    display:flex;
+    width:100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .stat{
+    flex:1;
+    background: var(--wood-dark);
+    border: 1px solid rgba(201,161,74,0.35);
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align:center;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .stat .label{
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(243,233,210,0.55);
+    margin-bottom: 2px;
+  }
+  .stat .value{
+    font-family: 'Space Mono', monospace;
+    font-weight:700;
+    font-size: 22px;
+    color: var(--brass-light);
+  }
+
+  /* VERSUS BOARD */
+  .versus-board{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    gap: 8px;
+  }
+  .player-card{
+    flex:1;
+    background: var(--wood-dark);
+    border: 1px solid rgba(201,161,74,0.35);
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align:center;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .player-card.active{
+    border-color: var(--brass-light);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.5), 0 0 12px rgba(201,161,74,0.45);
+  }
+  .player-card .label{
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(243,233,210,0.55);
+    margin-bottom: 2px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .player-card .value{
+    font-family: 'Space Mono', monospace;
+    font-weight:700;
+    font-size: 28px;
+    color: var(--brass-light);
+  }
+  .vs-label{
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(243,233,210,0.4);
+    padding: 0 4px;
+    white-space:nowrap;
+  }
+
+  .turn-indicator{
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align:center;
+    color: var(--brass-light);
+    font-weight:600;
+    min-height: 18px;
+  }
+
+  /* TABLE / CUP CANVAS */
+  .table-wrap{
+    width:100%;
+    background: linear-gradient(180deg, var(--felt-light), var(--felt));
+    border-radius: 14px;
+    border: 6px solid var(--wood);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 8px 18px rgba(0,0,0,0.35);
+    padding: 4px;
+    position: relative;
+    overflow:hidden;
+  }
+  canvas{
+    display:block;
+    width:100%;
+    height: 220px;
+    border-radius: 10px;
+  }
+
+  .result-banner{
+    position:absolute;
+    top: 12px;
+    left:0; right:0;
+    text-align:center;
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity:0;
+    transition: opacity 0.15s, transform 0.15s;
+    transform: translateY(-6px);
+    pointer-events:none;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  }
+  .result-banner.show{ opacity:1; transform: translateY(0); }
+  .result-banner.make{ color: var(--brass-light); }
+  .result-banner.miss{ color: var(--miss); }
+
+  /* METERS */
+  .meter-stage{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+  .meter-label{
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align:center;
+    color: rgba(243,233,210,0.85);
+    font-weight:600;
+  }
+  .meter-track{
+    position:relative;
+    width:100%;
+    height: 26px;
+    background: var(--wood-dark);
+    border-radius: 13px;
+    border: 1px solid rgba(0,0,0,0.5);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+    overflow:hidden;
+  }
+  /* sweet-spot zone */
+  .meter-track .zone{
+    position:absolute;
+    top:0; bottom:0;
+    background: rgba(201,161,74,0.35);
+    border-left: 2px solid var(--brass);
+    border-right: 2px solid var(--brass);
+  }
+  .meter-track .zone.perfect{
+    background: rgba(201,161,74,0.65);
+    border-color: var(--brass-light);
+  }
+  .meter-track .needle{
+    position:absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 5px;
+    border-radius: 3px;
+    background: var(--foam);
+    box-shadow: 0 0 8px rgba(255,247,224,0.9);
+  }
+
+  /* ACTION BUTTON */
+  .action-btn{
+    width:100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size: 18px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor:pointer;
+    background: linear-gradient(180deg, var(--brass-light), var(--brass));
+    color: var(--wood-dark);
+    box-shadow: 0 4px 0 #8a6b2c, 0 6px 10px rgba(0,0,0,0.35);
+    transition: transform 0.05s, box-shadow 0.05s;
+  }
+  .action-btn:active{
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #8a6b2c, 0 2px 6px rgba(0,0,0,0.35);
+  }
+  .action-btn.alt{
+    background: linear-gradient(180deg, #4a8a72, var(--felt-light));
+    color: var(--foam);
+    box-shadow: 0 4px 0 #173d31, 0 6px 10px rgba(0,0,0,0.35);
+  }
+  .action-btn.alt:active{ box-shadow: 0 1px 0 #173d31, 0 2px 6px rgba(0,0,0,0.35); }
+  .action-btn:disabled{ opacity:0.55; cursor:default; }
+  .action-btn + .action-btn{ margin-top: 10px; }
+
+  .rules{
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(243,233,210,0.55);
+    text-align:center;
+    padding: 0 4px;
+  }
+  .rules b{ color: var(--brass-light); }
+
+  .hidden{ display:none !important; }
+
+  /* OVERLAYS / MODALS */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background: rgba(20,12,8,0.84);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .modal{
+    background: var(--wood-dark);
+    border: 1px solid rgba(201,161,74,0.4);
+    border-radius: 14px;
+    padding: 24px 20px;
+    max-width: 400px;
+    width:100%;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.55);
+    text-align:center;
+  }
+  .modal h2{
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass-light);
+    margin: 0 0 4px;
+  }
+  .modal .sub{
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(243,233,210,0.5);
+    margin: 0 0 16px;
+  }
+  .option-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .option-btn{
+    background: var(--wood);
+    border: 2px solid rgba(201,161,74,0.3);
+    border-radius: 10px;
+    color: var(--cream);
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 8px;
+    cursor:pointer;
+    line-height: 1.4;
+  }
+  .option-btn span{
+    display:block;
+    font-size: 10px;
+    font-weight:400;
+    color: rgba(243,233,210,0.55);
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+  .option-btn.selected{
+    border-color: var(--brass-light);
+    background: rgba(201,161,74,0.18);
+    box-shadow: 0 0 0 1px var(--brass-light) inset;
+  }
+  .diff-block{ margin-bottom: 16px; }
+  .diff-block .meter-label{ margin-bottom: 8px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; animation: none !important; }
+  }
+
+  /* ===== TABLET / DESKTOP LAYOUT ===== */
+  @media (min-width: 700px){
+    main{
+      max-width: 1080px;
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      grid-template-rows: auto auto auto auto auto auto auto;
+      column-gap: 32px;
+      row-gap: 12px;
+      padding: 28px 32px 36px;
+      align-items: start;
+    }
+    h1{ grid-column: 1; grid-row: 1; text-align: left; }
+    .tagline{ grid-column: 1; grid-row: 2; text-align: left; }
+    .link-btn{ grid-column: 1; grid-row: 3; text-align: left; align-self: start; }
+    #practiceScoreboard, #versusBoard{ grid-column: 1; grid-row: 4; }
+    #turnIndicator{ grid-column: 1; grid-row: 5; text-align: left; }
+    #stage{ grid-column: 1; grid-row: 6; }
+    #actionBtn{ grid-column: 1; grid-row: 7; }
+    .rules{ grid-column: 1; grid-row: 8; text-align: left; padding: 0; }
+
+    .table-wrap{
+      grid-column: 2;
+      grid-row: 1 / 9;
+      align-self: stretch;
+      height: 100%;
+    }
+    canvas{ height: 100%; min-height: 460px; }
+  }
+
+  @media (min-width: 1024px){
+    main{ max-width: 1200px; }
+    h1{ font-size: 48px; }
+    canvas{ min-height: 520px; }
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <span class="num">044</span>Quarters Master ·
+  <a href="https://augustineiacopelli.github.io/appaday/">AppADay Portfolio</a>
+</header>
+
+<main>
+  <h1>Quarters Master</h1>
+  <div class="tagline">Bounce. Aim. Sink it.</div>
+  <button class="link-btn" id="menuBtn">Change Mode</button>
+
+  <div class="scoreboard" id="practiceScoreboard">
+    <div class="stat"><div class="label">Streak</div><div class="value" id="streakVal">0</div></div>
+    <div class="stat"><div class="label">Best</div><div class="value" id="bestVal">0</div></div>
+    <div class="stat"><div class="label">Made</div><div class="value" id="madeVal">0</div></div>
+    <div class="stat"><div class="label">Accuracy</div><div class="value" id="accVal">0%</div></div>
+  </div>
+
+  <div class="versus-board hidden" id="versusBoard">
+    <div class="player-card" id="p1Card">
+      <div class="label">Player 1</div>
+      <div class="value" id="p1Score">0</div>
+    </div>
+    <div class="vs-label">Race to 7</div>
+    <div class="player-card" id="p2Card">
+      <div class="label" id="p2Label">Player 2</div>
+      <div class="value" id="p2Score">0</div>
+    </div>
+  </div>
+
+  <div class="turn-indicator hidden" id="turnIndicator">Player 1's Turn</div>
+
+  <div class="table-wrap">
+    <canvas id="table" width="450" height="220"></canvas>
+    <div class="result-banner" id="banner"></div>
+  </div>
+
+  <div class="meter-stage" id="stage">
+    <div class="meter-label" id="meterLabel">Tap BOUNCE to set your power</div>
+    <div class="meter-track" id="meterTrack">
+      <div class="zone" id="zone"></div>
+      <div class="zone perfect" id="zonePerfect"></div>
+      <div class="needle" id="needle"></div>
+    </div>
+  </div>
+
+  <button class="action-btn" id="actionBtn" disabled>Bounce</button>
+
+  <div class="rules">
+    Two taps per shot. First locks your <b>power</b>, second locks your <b>aim</b>.
+    Land the needle in the <b>gold zone</b> for a make, the <b>bright zone</b> for a perfect.
+    In Practice the needle speeds up as your streak grows. In 2 Player, first to 7 cups wins.
+  </div>
+</main>
+
+<footer>
+  <a href="https://augustineiacopelli.github.io/appaday/">&larr; Back to AppADay Portfolio</a>
+</footer>
+
+<!-- SETUP OVERLAY -->
+<div class="overlay" id="setupOverlay">
+  <div class="modal">
+    <h2>Quarters Master</h2>
+    <div class="sub">Choose how to play</div>
+    <div class="option-grid" id="modeGrid">
+      <button class="option-btn" data-mode="practice">1 Player<span>Practice</span></button>
+      <button class="option-btn" data-mode="versus-human">2 Player<span>Pass &amp; Play</span></button>
+      <button class="option-btn" data-mode="versus-cpu" style="grid-column: span 2;">2 Player<span>vs CPU</span></button>
+    </div>
+    <div class="diff-block hidden" id="diffBlock">
+      <div class="meter-label">CPU Difficulty</div>
+      <div class="option-grid" id="diffGrid">
+        <button class="option-btn" data-diff="easy">Easy<span>Low make %</span></button>
+        <button class="option-btn" data-diff="medium">Medium<span>Coin flip</span></button>
+        <button class="option-btn" data-diff="hard">Hard<span>Sharp shooter</span></button>
+        <button class="option-btn" data-diff="veryhard">Very Hard<span>Ringer</span></button>
+      </div>
+    </div>
+    <button class="action-btn" id="startGameBtn" disabled>Start Game</button>
+  </div>
+</div>
+
+<!-- WIN OVERLAY -->
+<div class="overlay hidden" id="winOverlay">
+  <div class="modal">
+    <h2 id="winText">Player 1 Wins!</h2>
+    <div class="sub" id="winSub">First to 7 cups</div>
+    <button class="action-btn" id="rematchBtn">Play Again</button>
+    <button class="action-btn alt" id="menuBtn2">Main Menu</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- persistence ----------
+  var STORAGE_KEY = "quartersMaster_best";
+  var best = 0;
+  try {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) best = parseInt(stored, 10) || 0;
+  } catch(e) {}
+
+  // ---------- game mode state ----------
+  var mode = "practice";       // "practice" | "versus"
+  var opponent = "human";      // "human" | "cpu"
+  var cpuDiff = "medium";      // "easy" | "medium" | "hard" | "veryhard"
+  var selectedMode = null;
+  var selectedDiff = null;
+
+  var CPU_DIFFS = {
+    easy:     { make: 0.25, perfect: 0.10, label: "Easy" },
+    medium:   { make: 0.50, perfect: 0.25, label: "Medium" },
+    hard:     { make: 0.72, perfect: 0.35, label: "Hard" },
+    veryhard: { make: 0.90, perfect: 0.55, label: "Very Hard" }
+  };
+
+  var WIN_SCORE = 7;
+  var currentPlayer = 1; // 1 or 2, used in versus mode
+  var p1Score = 0, p2Score = 0;
+  var lastShooter = null;
+
+  // ---------- practice state ----------
+  var streak = 0;
+  var made = 0;
+  var attempts = 0;
+
+  // ---------- shot state ----------
+  var stage = "setup"; // "setup" | "power" | "aim" | "anim" | "cpu"
+  var lockedPower = 0; // 0-100
+  var lockedAim = 0;   // -50 to 50
+
+  // meter animation
+  var meterPos = 0;     // current 0-100 position of needle
+  var meterDir = 1;
+  var meterSpeed = 1.0; // base units per frame, scales with streak
+
+  // ---------- DOM ----------
+  var needle = document.getElementById("needle");
+  var zone = document.getElementById("zone");
+  var zonePerfect = document.getElementById("zonePerfect");
+  var meterLabel = document.getElementById("meterLabel");
+  var meterStage = document.getElementById("stage");
+  var actionBtn = document.getElementById("actionBtn");
+  var banner = document.getElementById("banner");
+  var streakVal = document.getElementById("streakVal");
+  var bestVal = document.getElementById("bestVal");
+  var madeVal = document.getElementById("madeVal");
+  var accVal = document.getElementById("accVal");
+
+  var practiceScoreboard = document.getElementById("practiceScoreboard");
+  var versusBoard = document.getElementById("versusBoard");
+  var turnIndicator = document.getElementById("turnIndicator");
+  var p1Card = document.getElementById("p1Card");
+  var p2Card = document.getElementById("p2Card");
+  var p2Label = document.getElementById("p2Label");
+  var p1ScoreEl = document.getElementById("p1Score");
+  var p2ScoreEl = document.getElementById("p2Score");
+
+  var setupOverlay = document.getElementById("setupOverlay");
+  var modeGrid = document.getElementById("modeGrid");
+  var diffBlock = document.getElementById("diffBlock");
+  var diffGrid = document.getElementById("diffGrid");
+  var startGameBtn = document.getElementById("startGameBtn");
+
+  var winOverlay = document.getElementById("winOverlay");
+  var winText = document.getElementById("winText");
+  var winSub = document.getElementById("winSub");
+  var rematchBtn = document.getElementById("rematchBtn");
+  var menuBtn = document.getElementById("menuBtn");
+  var menuBtn2 = document.getElementById("menuBtn2");
+
+  bestVal.textContent = best;
+
+  // ---------- canvas ----------
+  var canvas = document.getElementById("table");
+  var ctx = canvas.getContext("2d");
+
+  function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    canvas.width = Math.floor(rect.width * (window.devicePixelRatio || 1));
+    canvas.height = Math.floor(rect.height * (window.devicePixelRatio || 1));
+    ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
+    drawScene();
+  }
+  window.addEventListener("resize", resizeCanvas);
+
+  // cup position relative (0-1 of width/height)
+  var cup = { rx: 0.5, ry: 0.78, rRadius: 0.085 };
+
+  function w(){ return canvas.getBoundingClientRect().width; }
+  function h(){ return canvas.getBoundingClientRect().height; }
+
+  function drawTable(){
+    var W = w(), H = h();
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(W*0.5, H*0.05);
+    ctx.lineTo(W*0.5, H*0.95);
+    ctx.stroke();
+
+    // cup
+    var cx = W*cup.rx, cy = H*cup.ry, r = Math.min(W,H)*cup.rRadius;
+    // shadow
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + r*0.35, r*1.15, r*0.45, 0, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fill();
+    // cup body
+    ctx.beginPath();
+    ctx.moveTo(cx - r, cy - r*1.4);
+    ctx.lineTo(cx - r*0.75, cy + r*0.4);
+    ctx.lineTo(cx + r*0.75, cy + r*0.4);
+    ctx.lineTo(cx + r, cy - r*1.4);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(243,233,210,0.18)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(243,233,210,0.55)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // beer fill, height scales with "made" progress toward next milestone
+    var fillBase = mode === "practice" ? made : (p1Score + p2Score);
+    var fillFrac = Math.min(1, (fillBase % 10) / 10 + 0.08);
+    var topY = cy - r*1.4;
+    var botY = cy + r*0.4;
+    var fillTop = botY - (botY - topY) * fillFrac;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx - r, cy - r*1.4);
+    ctx.lineTo(cx - r*0.75, cy + r*0.4);
+    ctx.lineTo(cx + r*0.75, cy + r*0.4);
+    ctx.lineTo(cx + r, cy - r*1.4);
+    ctx.closePath();
+    ctx.clip();
+    ctx.fillStyle = "#e0a440";
+    ctx.fillRect(cx - r*1.2, fillTop, r*2.4, botY - fillTop + 4);
+    ctx.fillStyle = "rgba(255,247,224,0.5)";
+    ctx.fillRect(cx - r*1.2, fillTop, r*2.4, 4);
+    ctx.restore();
+    // rim
+    ctx.beginPath();
+    ctx.ellipse(cx, cy - r*1.4, r, r*0.28, 0, 0, Math.PI*2);
+    ctx.strokeStyle = "rgba(243,233,210,0.7)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    return { cx: cx, cy: cy - r*1.0, r: r };
+  }
+
+  // coin position for idle / preview
+  function drawCoin(x, y, radius, spin){
+    ctx.save();
+    ctx.translate(x, y);
+    var scaleX = Math.abs(Math.cos(spin || 0)) * 0.8 + 0.2;
+    ctx.scale(scaleX, 1);
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, Math.PI*2);
+    var grad = ctx.createRadialGradient(-radius*0.3, -radius*0.3, radius*0.1, 0, 0, radius);
+    grad.addColorStop(0, "#fff3c4");
+    grad.addColorStop(1, "#c9a14a");
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = "#8a6b2c";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  var coinAnim = null; // {t, duration, success, perfect, aimOffset}
+
+  function drawScene(){
+    var cupInfo = drawTable();
+    var W = w(), H = h();
+    if (!coinAnim){
+      drawCoin(W*0.5, H*0.94, Math.min(W,H)*0.045, 0);
+    } else {
+      var t = coinAnim.t / coinAnim.duration;
+      var startX = W*0.5;
+      var startY = H*0.94;
+      var endX, endY;
+      if (coinAnim.success){
+        endX = cupInfo.cx + coinAnim.aimOffset * W * 0.001;
+        endY = cupInfo.cy;
+      } else {
+        endX = cupInfo.cx + coinAnim.aimOffset * W * 0.0025;
+        endY = H*0.55;
+      }
+      var x = startX + (endX - startX) * t;
+      var arcHeight = H * 0.32;
+      var y = startY + (endY - startY) * t - Math.sin(Math.PI * t) * arcHeight;
+      var radius = Math.min(W,H)*0.045 * (1 - 0.3*t);
+      if (coinAnim.success && t > 0.96){
+        radius *= (1 - (t-0.96)/0.04);
+      }
+      if (radius > 0) drawCoin(x, y, radius, coinAnim.t*0.6);
+    }
+  }
+
+  function animLoop(){
+    if (coinAnim){
+      coinAnim.t += 1;
+      if (coinAnim.t >= coinAnim.duration){
+        coinAnim = null;
+        finishShot();
+      }
+    }
+    drawScene();
+    requestAnimationFrame(animLoop);
+  }
+
+  // ---------- audio ----------
+  var audioCtx = null;
+  function getAudio(){
+    if (!audioCtx){
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(e){ audioCtx = null; }
+    }
+    return audioCtx;
+  }
+  function playTone(freq, dur, type, vol){
+    var ac = getAudio();
+    if (!ac) return;
+    if (ac.state === "suspended") ac.resume();
+    var osc = ac.createOscillator();
+    var gain = ac.createGain();
+    osc.type = type || "sine";
+    osc.frequency.value = freq;
+    gain.gain.value = vol || 0.15;
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+    osc.stop(ac.currentTime + dur);
+  }
+  function playMake(perfect){
+    playTone(880, 0.12, "triangle", 0.18);
+    setTimeout(function(){ playTone(perfect ? 1320 : 1100, 0.18, "triangle", 0.18); }, 90);
+    if (perfect){
+      setTimeout(function(){ playTone(1760, 0.22, "triangle", 0.16); }, 180);
+    }
+  }
+  function playMiss(){
+    playTone(160, 0.25, "sawtooth", 0.12);
+  }
+  function playTick(){
+    playTone(520, 0.04, "square", 0.05);
+  }
+
+  // ---------- meter logic ----------
+  var POWER_ZONE = { lo: 42, hi: 66 };
+  var POWER_PERFECT = { lo: 51, hi: 59 };
+  var AIM_ZONE = { lo: 38, hi: 62 };
+  var AIM_PERFECT = { lo: 47, hi: 55 };
+
+  function setZones(zoneRange, perfectRange){
+    zone.style.left = zoneRange.lo + "%";
+    zone.style.width = (zoneRange.hi - zoneRange.lo) + "%";
+    zonePerfect.style.left = perfectRange.lo + "%";
+    zonePerfect.style.width = (perfectRange.hi - perfectRange.lo) + "%";
+  }
+
+  function updateNeedle(){
+    needle.style.left = "calc(" + meterPos + "% - 2.5px)";
+  }
+
+  function meterTick(){
+    if (stage === "power" || stage === "aim"){
+      meterPos += meterDir * meterSpeed;
+      if (meterPos >= 100){ meterPos = 100; meterDir = -1; }
+      if (meterPos <= 0){ meterPos = 0; meterDir = 1; }
+      updateNeedle();
+    }
+    requestAnimationFrame(meterTick);
+  }
+
+  function inRange(val, range){ return val >= range.lo && val <= range.hi; }
+
+  // ---------- turn / UI helpers ----------
+  function refreshTurnUI(){
+    if (mode === "practice"){
+      turnIndicator.classList.add("hidden");
+      return;
+    }
+    turnIndicator.classList.remove("hidden");
+    p1Card.classList.toggle("active", currentPlayer === 1);
+    p2Card.classList.toggle("active", currentPlayer === 2);
+    if (currentPlayer === 1){
+      turnIndicator.textContent = "Player 1's Turn";
+    } else {
+      turnIndicator.textContent = (opponent === "cpu") ? "CPU's Turn" : "Player 2's Turn";
+    }
+  }
+
+  function startPowerStage(){
+    refreshTurnUI();
+
+    if (mode === "versus" && opponent === "cpu" && currentPlayer === 2){
+      startCpuTurn();
+      return;
+    }
+
+    meterStage.classList.remove("hidden");
+    actionBtn.classList.remove("hidden");
+    actionBtn.disabled = false;
+
+    stage = "power";
+    meterPos = 0;
+    meterDir = 1;
+    meterSpeed = 1.8 + Math.min(streak, 20) * 0.16;
+    setZones(POWER_ZONE, POWER_PERFECT);
+    meterLabel.textContent = "Tap BOUNCE to set your power";
+    actionBtn.textContent = "Bounce";
+    actionBtn.classList.remove("alt");
+    banner.classList.remove("show");
+  }
+
+  function startAimStage(){
+    stage = "aim";
+    meterPos = 0;
+    meterDir = 1;
+    meterSpeed = 2.3 + Math.min(streak, 20) * 0.18;
+    setZones(AIM_ZONE, AIM_PERFECT);
+    meterLabel.textContent = "Now tap to lock your aim";
+    actionBtn.textContent = "Aim";
+    actionBtn.classList.add("alt");
+  }
+
+  // ---------- CPU ----------
+  function startCpuTurn(){
+    stage = "cpu";
+    meterStage.classList.add("hidden");
+    actionBtn.classList.add("hidden");
+    banner.classList.remove("show");
+    turnIndicator.textContent = "CPU is shooting...";
+    setTimeout(cpuShoot, 1100);
+  }
+
+  function cpuShoot(){
+    var cfg = CPU_DIFFS[cpuDiff];
+    var success = Math.random() < cfg.make;
+    var perfect = success && Math.random() < cfg.perfect;
+    var aimOffset;
+    if (perfect){
+      aimOffset = (Math.random() * 8) - 4;
+    } else if (success){
+      aimOffset = (Math.random() * 30) - 15;
+    } else {
+      aimOffset = (Math.random() * 70) - 35;
+    }
+    lastShooter = 2;
+    lastResult = { success: success, perfect: perfect };
+    startCoinAnim(success, perfect, aimOffset);
+  }
+
+  // ---------- shot resolution ----------
+  var lastResult = null;
+
+  function startCoinAnim(success, perfect, aimOffset){
+    stage = "anim";
+    var msg = success ? (perfect ? "PERFECT BOUNCE!" : "It's in the cup!") : "Off the table...";
+    meterLabel.textContent = msg;
+    if (mode === "versus") turnIndicator.textContent = msg;
+    actionBtn.textContent = "...";
+    actionBtn.disabled = true;
+    coinAnim = { t: 0, duration: 36, success: success, perfect: perfect, aimOffset: aimOffset };
+  }
+
+  function resolveShot(){
+    var powerHit = inRange(lockedPower, POWER_ZONE);
+    var powerPerfect = inRange(lockedPower, POWER_PERFECT);
+    var aimHit = inRange(lockedAim, AIM_ZONE);
+    var aimPerfect = inRange(lockedAim, AIM_PERFECT);
+
+    var success = powerHit && aimHit;
+    var perfect = success && powerPerfect && aimPerfect;
+    var aimOffset = lockedAim - 50; // -50..50, signed offset from center
+
+    lastShooter = (mode === "versus") ? currentPlayer : null;
+    lastResult = { success: success, perfect: perfect };
+    startCoinAnim(success, perfect, aimOffset);
+  }
+
+  function finishShot(){
+    var result = lastResult;
+
+    if (mode === "practice"){
+      attempts++;
+      if (result.success){
+        made++;
+        streak++;
+        if (streak > best){
+          best = streak;
+          try { localStorage.setItem(STORAGE_KEY, String(best)); } catch(e) {}
+        }
+        banner.textContent = result.perfect ? "PERFECT!" : "MAKE!";
+        banner.className = "result-banner make show";
+        playMake(result.perfect);
+      } else {
+        streak = 0;
+        banner.textContent = "MISS";
+        banner.className = "result-banner miss show";
+        playMiss();
+      }
+      streakVal.textContent = streak;
+      bestVal.textContent = best;
+      madeVal.textContent = made;
+      accVal.textContent = attempts > 0 ? Math.round((made/attempts)*100) + "%" : "0%";
+
+      setTimeout(function(){
+        banner.classList.remove("show");
+        startPowerStage();
+      }, 900);
+
+    } else {
+      // versus mode
+      if (result.success){
+        if (currentPlayer === 1){
+          p1Score++; p1ScoreEl.textContent = p1Score;
+        } else {
+          p2Score++; p2ScoreEl.textContent = p2Score;
+        }
+        banner.textContent = result.perfect ? "PERFECT!" : "MAKE!";
+        banner.className = "result-banner make show";
+        playMake(result.perfect);
+      } else {
+        banner.textContent = "MISS";
+        banner.className = "result-banner miss show";
+        playMiss();
+      }
+
+      var winnerScore = currentPlayer === 1 ? p1Score : p2Score;
+      if (winnerScore >= WIN_SCORE){
+        setTimeout(function(){
+          banner.classList.remove("show");
+          showWinModal(currentPlayer);
+        }, 900);
+      } else {
+        currentPlayer = currentPlayer === 1 ? 2 : 1;
+        setTimeout(function(){
+          banner.classList.remove("show");
+          startPowerStage();
+        }, 900);
+      }
+    }
+  }
+
+  function showWinModal(winner){
+    if (winner === 1){
+      winText.textContent = "Player 1 Wins!";
+    } else {
+      winText.textContent = (opponent === "cpu") ? "CPU Wins!" : "Player 2 Wins!";
+    }
+    winSub.textContent = p1Score + " – " + p2Score;
+    winOverlay.classList.remove("hidden");
+  }
+
+  // ---------- input ----------
+  function handleAction(){
+    if (actionBtn.disabled) return;
+    if (stage !== "power" && stage !== "aim") return;
+    playTick();
+    if (stage === "power"){
+      lockedPower = meterPos;
+      startAimStage();
+    } else if (stage === "aim"){
+      lockedAim = meterPos;
+      resolveShot();
+    }
+  }
+
+  actionBtn.addEventListener("click", function(e){
+    e.preventDefault();
+    handleAction();
+  });
+
+  window.addEventListener("keydown", function(e){
+    if (e.code === "Space" || e.code === "Enter"){
+      if (!setupOverlay.classList.contains("hidden")) return;
+      if (!winOverlay.classList.contains("hidden")) return;
+      e.preventDefault();
+      handleAction();
+    }
+  });
+
+  // ---------- setup overlay ----------
+  function diffLabel(key){ return CPU_DIFFS[key] ? CPU_DIFFS[key].label : ""; }
+
+  function validateStart(){
+    var ok = false;
+    if (selectedMode === "practice" || selectedMode === "versus-human") ok = true;
+    if (selectedMode === "versus-cpu" && selectedDiff) ok = true;
+    startGameBtn.disabled = !ok;
+  }
+
+  var modeBtns = modeGrid.querySelectorAll(".option-btn");
+  for (var mi = 0; mi < modeBtns.length; mi++){
+    modeBtns[mi].addEventListener("click", function(){
+      for (var j = 0; j < modeBtns.length; j++) modeBtns[j].classList.remove("selected");
+      this.classList.add("selected");
+      selectedMode = this.getAttribute("data-mode");
+      if (selectedMode === "versus-cpu"){
+        diffBlock.classList.remove("hidden");
+      } else {
+        diffBlock.classList.add("hidden");
+        var dBtns = diffGrid.querySelectorAll(".option-btn");
+        for (var k = 0; k < dBtns.length; k++) dBtns[k].classList.remove("selected");
+        selectedDiff = null;
+      }
+      validateStart();
+    });
+  }
+
+  var diffBtns = diffGrid.querySelectorAll(".option-btn");
+  for (var di = 0; di < diffBtns.length; di++){
+    diffBtns[di].addEventListener("click", function(){
+      for (var j2 = 0; j2 < diffBtns.length; j2++) diffBtns[j2].classList.remove("selected");
+      this.classList.add("selected");
+      selectedDiff = this.getAttribute("data-diff");
+      validateStart();
+    });
+  }
+
+  function beginGame(){
+    mode = (selectedMode === "practice") ? "practice" : "versus";
+    opponent = (selectedMode === "versus-cpu") ? "cpu" : "human";
+    if (opponent === "cpu") cpuDiff = selectedDiff || "medium";
+
+    currentPlayer = 1;
+    p1Score = 0; p2Score = 0;
+    p1ScoreEl.textContent = "0";
+    p2ScoreEl.textContent = "0";
+
+    if (mode === "practice"){
+      practiceScoreboard.classList.remove("hidden");
+      versusBoard.classList.add("hidden");
+      turnIndicator.classList.add("hidden");
+    } else {
+      practiceScoreboard.classList.add("hidden");
+      versusBoard.classList.remove("hidden");
+      turnIndicator.classList.remove("hidden");
+      p2Label.textContent = (opponent === "cpu") ? ("CPU \u00B7 " + diffLabel(cpuDiff)) : "Player 2";
+    }
+
+    coinAnim = null;
+    banner.classList.remove("show");
+    setupOverlay.classList.add("hidden");
+    winOverlay.classList.add("hidden");
+    startPowerStage();
+  }
+
+  startGameBtn.addEventListener("click", beginGame);
+
+  rematchBtn.addEventListener("click", function(){
+    winOverlay.classList.add("hidden");
+    currentPlayer = 1;
+    p1Score = 0; p2Score = 0;
+    p1ScoreEl.textContent = "0";
+    p2ScoreEl.textContent = "0";
+    coinAnim = null;
+    startPowerStage();
+  });
+
+  function openSetup(){
+    coinAnim = null;
+    stage = "setup";
+    meterStage.classList.remove("hidden");
+    actionBtn.classList.remove("hidden");
+    actionBtn.disabled = true;
+    banner.classList.remove("show");
+    winOverlay.classList.add("hidden");
+    setupOverlay.classList.remove("hidden");
+  }
+
+  menuBtn.addEventListener("click", openSetup);
+  menuBtn2.addEventListener("click", openSetup);
+
+  // ---------- init ----------
+  resizeCanvas();
+  setZones(POWER_ZONE, POWER_PERFECT);
+  updateNeedle();
+  meterTick();
+  requestAnimationFrame(animLoop);
+
+})();
+</script>
+</body>
+</html>
